@@ -6,65 +6,74 @@ using Cysharp.Threading.Tasks;
 using UniRx;
 using Zenject;
 
-public class PlayerDriver : MonoBehaviour, IDriver
+namespace AUL.PlayerInput
 {
-    [Inject]
-    private IInputService _inputManager;
-    [Inject]
-    private IDistanceAnalyticService _distanceAnalytic;
-    [Inject]
-    private IGameModel _gameModel;
-    [Inject] 
-    private GameSettingsSO _gameSettings;
-    
-    private bool _isStopped;
-
-    private void Awake()
+    public class PlayerDriver : MonoBehaviour, IDriver
     {
-        _inputManager.MovePlayerCommand
-            .Subscribe(MovePlayerCommandHandler);
-    }
+        [Inject] private IInputService _inputManager;
+        [Inject] private IDistanceAnalyticService _distanceAnalytic;
+        [Inject] private IGameModel _gameModel;
+        [Inject] private GameSettingsSO _gameSettings;
 
-    private void MovePlayerCommandHandler(Path path)
-    {
-        Debug.Log("MovePlayerCommandHandler");
-        MoveAlongPath(path);
-    }
+        private bool _isStopped;
 
-    public async UniTask MoveAlongPath(Path path)
-    {
-        _isStopped = false;
-        float totalPathDistance = path.GetRelativeLength(transform.position);
-        float travelledDistance = 0f;
-        float dynamicSpeed = _gameSettings.PlayerSpeed;
-        
-        foreach (var targetPoint in path._points)
+        private void Awake()
         {
-            while (Vector3.Distance(transform.position, targetPoint) > 0.01f)
+            _inputManager.MovePlayerCommand
+                .Subscribe(MovePlayerCommandHandler);
+
+            _inputManager.StopPlayerCommand
+                .Subscribe(StopPlayerCommandHandler);
+        }
+
+        private void MovePlayerCommandHandler(Path path)
+        {
+            Debug.Log("MovePlayerCommandHandler");
+            MoveAlongPath(path);
+        }
+
+        private void StopPlayerCommandHandler(Unit unit)
+        {
+            Debug.Log("StopPlayerCommandHandler");
+            StopMovement();
+        }
+
+        public async UniTask MoveAlongPath(Path path)
+        {
+            _isStopped = false;
+            float totalPathDistance = path.GetRelativeLength(transform.position);
+            float travelledDistance = 0f;
+            float dynamicSpeed = _gameSettings.PlayerSpeed;
+
+            foreach (var targetPoint in path._points)
             {
-                if (_isStopped) return;
+                while (Vector3.Distance(transform.position, targetPoint) > 0.01f)
+                {
+                    if (_isStopped) return;
 
-                dynamicSpeed = _gameSettings.PlayerSpeed * RecalculateSpeedMultiplier(CalculateProgress(travelledDistance, totalPathDistance));
+                    dynamicSpeed = _gameSettings.PlayerSpeed *
+                                   RecalculateSpeedMultiplier(CalculateProgress(travelledDistance, totalPathDistance));
 
-                Vector3 direction = (targetPoint - transform.position).normalized;
-                float distance = dynamicSpeed * Time.deltaTime;
-                travelledDistance += distance;
-                _distanceAnalytic.RegisterNewDeltaDistance(distance);
+                    Vector3 direction = (targetPoint - transform.position).normalized;
+                    float distance = dynamicSpeed * Time.deltaTime;
+                    travelledDistance += distance;
+                    _distanceAnalytic.RegisterNewDeltaDistance(distance);
 
-                Vector3 delta = direction * distance;
-                transform.position += delta;
+                    Vector3 delta = direction * distance;
+                    transform.position += delta;
 
-                await UniTask.Yield(PlayerLoopTiming.Update);
+                    await UniTask.Yield(PlayerLoopTiming.Update);
+                }
             }
         }
+
+        public void StopMovement()
+        {
+            _isStopped = true;
+        }
+
+        private float CalculateProgress(float progress, float totalDistance) => progress / totalDistance;
+
+        private float RecalculateSpeedMultiplier(float progress) => _gameSettings.SpeedChangeCurve.Evaluate(progress);
     }
-
-    public void StopMovement()
-    {
-        _isStopped = true;
-    }
-
-    private float CalculateProgress(float progress, float totalDistance) => progress/totalDistance;
-
-    private float RecalculateSpeedMultiplier(float progress) => _gameSettings.SpeedChangeCurve.Evaluate(progress);
 }

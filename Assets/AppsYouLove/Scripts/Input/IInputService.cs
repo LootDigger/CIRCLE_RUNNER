@@ -1,6 +1,10 @@
 using UniRx;
 
-public interface IInputService 
+namespace AUL.PlayerInput
 {
-    public ReactiveCommand<Path> MovePlayerCommand { get; }
+    public interface IInputService
+    {
+        public ReactiveCommand<Path> MovePlayerCommand { get; }
+        public ReactiveCommand StopPlayerCommand { get; }
+    }
 }
