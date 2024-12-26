@@ -1,14 +1,22 @@
+using AUL.Player;
+using UniRx;
+using UnityEngine;
+using Zenject;
+
 namespace AUL.Core
 {
-    public class GameManager
+    public class GameManager : MonoBehaviour
     {
-        private readonly IGameModel _gameModel;
-        private readonly IView _uiManager;
+        private EnemyCollisionTracker _enemyCollisionTracker;
+        private IGameModel _gameModel;
+        private IView _uiManager;
         
-        public GameManager(IView uiManager, IGameModel gameModel)
+        [Inject]
+        public void Init(IView uiManager, IGameModel gameModel, EnemyCollisionTracker enemyTracker)
         {
             _uiManager = uiManager;
             _gameModel = gameModel;
+            _enemyCollisionTracker = enemyTracker;
             SubscribeEvents();
         }
 
@@ -16,9 +24,10 @@ namespace AUL.Core
         {
             _gameModel.SubscribeScoreModelChange(OnScoreChanged);
             _gameModel.SubscribeDistanceModelChange(OnTravelledDistanceChanged);
+            _enemyCollisionTracker.EnemyCollisionCommand.Subscribe(OnEnemyCollision);
         }
         
-        private void OnEnemyCollision()
+        private void OnEnemyCollision(Unit unit)
         {
             _gameModel.IncrementScore();
         }

@@ -12,42 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d584a0492bcbc624d9763bf6a718f8a1, type: 3}
   m_Name: GameSettingsSO
   m_EditorClassIdentifier: 
-  _playerSpeed: 1
+  _playerSpeed: 2
   _speedChangeCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
-      inSlope: 0.6196053
-      outSlope: 0.6196053
+      value: 0.20315552
+      inSlope: 1.5788596
+      outSlope: 1.5788596
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.6902909
-      value: 1.4277079
-      inSlope: 2.4180827
-      outSlope: 2.4180827
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.86834437
-      value: 2.1784809
-      inSlope: 5.009939
-      outSlope: 5.009939
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1.0025389
-      value: 2.9572546
-      inSlope: 5.803319
-      outSlope: 5.803319
+      time: 0.9879761
+      value: 1.763031
+      inSlope: 1.5788596
+      outSlope: 1.5788596
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -55,3 +37,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _enemyCount: 5
+  _enemySpawnDelay: 2
+  _enemyPrefab: {fileID: 6973066454879398071, guid: 1cd9d8832b97912468832c75f06fe36b, type: 3}

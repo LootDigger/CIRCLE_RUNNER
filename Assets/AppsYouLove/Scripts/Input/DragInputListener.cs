@@ -17,8 +17,9 @@ namespace AUL.PlayerInput
         private void DragStreamInit()
         {
             Observable.EveryUpdate()
-                .Where(_ => Input.GetMouseButton(0))
-                .Select(_ => Input.mousePosition)
+                .Where(_ => Input.touchCount > 0)
+                .Select(_ => Input.GetTouch(0))
+                .Select(touch => touch.position)
                 .DistinctUntilChanged()
                 .Subscribe(mousePos => { _onTouchDragged.OnNext(mousePos); }).AddTo(_disposable);
         }

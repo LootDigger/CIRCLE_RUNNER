@@ -1,5 +1,6 @@
 using System;
 using AUL.Services;
+using UnityEngine;
 
 namespace AUL.Core
 {
@@ -16,6 +17,23 @@ namespace AUL.Core
             _scoreModel = new ScoreModel();
             _distanceModel = new TravelDistanceModel();
             LoadPlayerData();
+            SubscribeModelChangeEvents();
+        }
+
+        private void SubscribeModelChangeEvents()
+        {
+            _scoreModel.SubscribeModelChange(OnScoreModelChange);
+            _distanceModel.SubscribeModelChange(OnDistanceModelChange);
+        }
+
+        private void OnDistanceModelChange(float newDistance)
+        {
+            _playerData.DistanceValue = newDistance;
+        }
+
+        private void OnScoreModelChange(int newScore)
+        {
+            _playerData.ScoreValue = newScore;
         }
 
         private void LoadPlayerData()
@@ -42,12 +60,14 @@ namespace AUL.Core
         public void UpdateScoreModel(int newScore)
         {
             _scoreModel.UpdateValue(newScore); 
+            _dataService.SavePlayerData(_playerData);
         }
 
         public void IncrementScore()
         {
             int score = _scoreModel.Value;
             UpdateScoreModel(++score);
+
         }
 
         public void UpdateDistanceModel(float newDistanceDelta)
