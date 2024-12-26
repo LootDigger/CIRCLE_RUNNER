@@ -19,10 +19,11 @@ namespace AUL.PlayerInput
         public ReactiveCommand StopPlayerCommand => _stopPlayerCommand;
         
         [Inject]
-        public void Init(ITouchListener touchListener, IDragListener dragListener)
+        public void Init(ITouchListener touchListener, IDragListener dragListener, PlayerStopper playerStopper)
         {
             _touchListener = touchListener;
             _dragListener = dragListener;
+            _playerStopper = playerStopper;
             SubscribeEvents();
         }
 
@@ -36,9 +37,9 @@ namespace AUL.PlayerInput
 
         #region Input Handling
 
-        private void OnTouchBeganHandler(Vector2 position)
+        private void OnTouchBeganHandler(Vector2 screenCoords)
         {
-            _pathBuilder.CreateNewPath();
+            _pathBuilder.CreateNewPath(screenCoords);
         }
 
         private void OnTouchEndedHandler(Unit obj)
