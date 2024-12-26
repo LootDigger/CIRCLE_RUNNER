@@ -52,7 +52,8 @@ namespace AUL.PlayerInput
                 while (Vector3.Distance(transform.position, targetPoint) > 0.01f)
                 {
                     dynamicSpeed = _gameSettings.PlayerSpeed *
-                                   RecalculateSpeedMultiplier(CalculateProgress(travelledDistance, totalPathDistance));
+                                   RecalculateSpeedMultiplier(
+                                       CalculateProgress(travelledDistance, totalPathDistance));
 
                     Vector3 direction = (targetPoint - transform.position).normalized;
                     float distance = dynamicSpeed * Time.deltaTime;
