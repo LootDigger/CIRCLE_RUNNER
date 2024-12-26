@@ -39,7 +39,7 @@ namespace AUL.PlayerInput
 
         private void OnTouchBeganHandler(Vector2 screenCoords)
         {
-            _pathBuilder.CreateNewPath(screenCoords);
+            _pathBuilder.CreateNewPath();
         }
 
         private void OnTouchEndedHandler(Unit obj)
