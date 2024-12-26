@@ -50,9 +50,11 @@ namespace AUL.Core
             UpdateScoreModel(++score);
         }
 
-        public void UpdateDistanceModel(float newDistance)
+        public void UpdateDistanceModel(float newDistanceDelta)
         {
-            _distanceModel.UpdateValue(newDistance); 
+            float distance = _distanceModel.Value;
+            distance += newDistanceDelta;
+            _distanceModel.UpdateValue(distance); 
         }
 
         public void Dispose()

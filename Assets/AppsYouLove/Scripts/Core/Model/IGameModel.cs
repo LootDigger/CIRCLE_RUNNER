@@ -12,6 +12,6 @@ namespace AUL.Core
     
     void UpdateScoreModel(int newScore);
     void IncrementScore();
-    void UpdateDistanceModel(float newDistance);
+    void UpdateDistanceModel(float newDistanceDelta);
   }
 }

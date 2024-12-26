@@ -1,6 +1,3 @@
-using System;
-using Zenject;
-
 namespace AUL.Core
 {
     public class GameManager
@@ -18,13 +15,9 @@ namespace AUL.Core
         private void SubscribeEvents()
         {
             _gameModel.SubscribeScoreModelChange(OnScoreChanged);
-            _gameModel.SubscribeDistanceModelChange(OnDistanceChanged);
+            _gameModel.SubscribeDistanceModelChange(OnTravelledDistanceChanged);
         }
-
-        private void OnPathCreated()
-        {
-        }
-
+        
         private void OnEnemyCollision()
         {
             _gameModel.IncrementScore();
@@ -35,7 +28,7 @@ namespace AUL.Core
             _uiManager.UpdateScoreView(score);
         }
 
-        private void OnDistanceChanged(float distance)
+        private void OnTravelledDistanceChanged(float distance)
         {
             _uiManager.UpdateDistanceTrackerView(distance);
         }

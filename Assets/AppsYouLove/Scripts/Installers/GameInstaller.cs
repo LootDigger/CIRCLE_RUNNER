@@ -1,3 +1,4 @@
+using AUL.Analytic;
 using AUL.Core;
 using AUL.Services;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace AUL.Installers.Boot
             
             Container.Bind<IView>().FromInstance(_uiManager);
             Container.Bind<IGameModel>().To<GameData>().AsSingle();
+            Container.Bind<IDistanceAnalyticService>().To<TravelDistanceSpyService>().AsSingle();
             
             Container.Bind<GameManager>().AsSingle();
         }
