@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using AUL.Analytic;
 using AUL.Core;
@@ -16,7 +17,7 @@ namespace AUL.PlayerInput
         [Inject] private IGameModel _gameModel;
         [Inject] private GameSettingsSO _gameSettings;
         
-        private bool _isStopped;
+        private CancellationTokenSource _cts;
 
         private void Awake()
         {
@@ -29,7 +30,10 @@ namespace AUL.PlayerInput
 
         private void MovePlayerCommandHandler(Path path)
         {
-            StopMovement();
+            if(_cts != null)
+                _cts.Cancel();
+
+            _cts = new CancellationTokenSource();
             MoveAlongPath(path);
         }
 
@@ -40,7 +44,6 @@ namespace AUL.PlayerInput
 
         public async UniTask MoveAlongPath(Path path)
         {
-            _isStopped = false;
             float totalPathDistance = path.GetRelativeLength(transform.position);
             float travelledDistance = 0f;
             float dynamicSpeed = _gameSettings.PlayerSpeed;
@@ -63,20 +66,24 @@ namespace AUL.PlayerInput
                     Vector3 delta = direction * distance;
                     transform.position += delta;
 
-                    await UniTask.Yield(PlayerLoopTiming.Update);
-                    
-                    if (_isStopped) return;
+                    await UniTask.Yield(PlayerLoopTiming.Update,_cts.Token,true);
                 }
             }
         }
 
         public void StopMovement()
         {
-            _isStopped = true;
+            _cts.Cancel();
         }
 
         private float CalculateProgress(float progress, float totalDistance) => progress / totalDistance;
 
         private float RecalculateSpeedMultiplier(float progress) => _gameSettings.SpeedChangeCurve.Evaluate(progress);
+
+        private void OnDestroy()
+        {
+            if(_cts == null) return;
+            _cts.Cancel();
+        }
     }
 }
